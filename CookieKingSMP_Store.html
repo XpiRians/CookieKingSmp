@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CookieKingSMP Store</title>
 <style>
 body{margin:0;background:#0b0b0d;color:white;font-family:Arial;text-align:center}
@@ -16,11 +17,25 @@ h1{font-size:42px;margin:30px}
 .name{font-size:25px;font-weight:bold}.name span{color:#168cff}
 ul{text-align:left;color:#aaa;line-height:2}
 .price{border:1px solid #168cff;padding:12px;border-radius:8px;color:#168cff}
-button{margin-top:15px;width:100%;padding:12px;background:#168cff;border:0;border-radius:10px;color:white}
-@media(max-width:700px){.cards{display:block}.card{margin:15px}}
+button{margin-top:15px;width:100%;padding:12px;background:#168cff;border:0;border-radius:10px;color:white;font-weight:bold;cursor:pointer;transition:.2s}
+button:hover{background:#0e6edb}
+@media(max-width:700px){.cards{display:block}.card{margin:15px 0}}
+
+/* Модальное окно для ввода ника и оплаты */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);justify-content:center;align-items:center;z-index:100}
+.modal{background:#1b1b1e;border:1px solid #333;border-radius:16px;padding:30px;width:90%;max-width:400px;text-align:left;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+.modal h3{margin-top:0;font-size:22px;color:#fff}
+.modal p{color:#888;font-size:14px;margin-bottom:20px}
+.modal input[type="text"]{width:100%;padding:12px;box-sizing:border-box;background:#0b0b0d;border:1px solid #444;border-radius:8px;color:white;font-size:16px;margin-bottom:15px;outline:none}
+.modal input[type="text"]:focus{border-color:#168cff}
+.modal-buttons{display:flex;gap:10px}
+.btn-close{background:#333;flex:1}
+.btn-close:hover{background:#444}
+.btn-submit{flex:2}
 </style>
 </head>
 <body>
+
 <div class="container">
 <div class="logo">🍪</div>
 <h1>Store</h1>
@@ -28,10 +43,89 @@ button{margin-top:15px;width:100%;padding:12px;background:#168cff;border:0;borde
 <div class="ip">cookiekingsmp.abrdns.com</div>
 <h2>Ranks</h2>
 <div class="cards">
-<div class="card"><div class="name">Cookie<span>+</span></div><ul><li>5 Homes</li><li>30 Auction Slots</li><li>Special Kit</li></ul><div class="price">€4.99 / month</div><button>Buy</button></div>
-<div class="card"><div class="name">Cookie<span>++</span></div><ul><li>15 Homes</li><li>70 Auction Slots</li><li>Premium Kit</li></ul><div class="price">€9.99 / month</div><button>Buy</button></div>
-<div class="card"><div class="name">Cookie<span>+++</span></div><ul><li>50 Homes</li><li>150 Auction Slots</li><li>Ultimate Kit</li></ul><div class="price">€14.99 / month</div><button>Buy</button></div>
+
+  <div class="card">
+    <div class="name">Cookie<span>+</span></div>
+    <ul>
+      <li>5 Homes</li>
+      <li>30 Auction Slots</li>
+      <li>Special Kit</li>
+    </ul>
+    <div class="price">500 RUB / month</div>
+    <button onclick="openPayModal('Cookie+', 500)">Buy</button>
+  </div>
+
+  <div class="card">
+    <div class="name">Cookie<span>++</span></div>
+    <ul>
+      <li>15 Homes</li>
+      <li>70 Auction Slots</li>
+      <li>Premium Kit</li>
+    </ul>
+    <div class="price">1000 RUB / month</div>
+    <button onclick="openPayModal('Cookie++', 1000)">Buy</button>
+  </div>
+
+  <div class="card">
+    <div class="name">Cookie<span>+++</span></div>
+    <ul>
+      <li>50 Homes</li>
+      <li>150 Auction Slots</li>
+      <li>Ultimate Kit</li>
+    </ul>
+    <div class="price">1500 RUB / month</div>
+    <button onclick="openPayModal('Cookie+++', 1500)">Buy</button>
+  </div>
+
 </div>
 </div>
+
+<!-- Всплывающее окно AnyPay -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">Покупка привилегии</h3>
+    <p id="modal-desc">Введите ваш ник в игре для выдачи доната:</p>
+
+    <form action="https://anypay.io/merchant" method="POST" id="pay-form">
+      <!-- Настройки AnyPay -->
+      <input type="hidden" name="merchant_id" value="ТВОЙ_MERCHANT_ID">
+      <input type="hidden" name="amount" id="form-amount" value="0">
+      <input type="hidden" name="currency" value="RUB">
+      <input type="hidden" name="pay_id" id="form-pay-id" value="">
+      <input type="hidden" name="desc" id="form-desc" value="">
+
+      <!-- Ввод ника -->
+      <input type="text" name="account" placeholder="Твой ник в Minecraft" required autocomplete="off">
+
+      <div class="modal-buttons">
+        <button type="button" class="btn-close" onclick="closePayModal()">Отмена</button>
+        <button type="submit" class="btn-submit">Перейти к оплате</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openPayModal(rankName, price) {
+  document.getElementById('modal-title').innerText = 'Покупка ' + rankName;
+  document.getElementById('form-amount').value = price;
+  document.getElementById('form-desc').value = 'Покупка ' + rankName + ' на CookieKingSMP';
+  document.getElementById('form-pay-id').value = Date.now(); // Уникальный ID платежа
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function closePayModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+// Закрытие модалки при клике вне окна
+window.onclick = function(event) {
+  var modal = document.getElementById('modal');
+  if (event.target == modal) {
+    closePayModal();
+  }
+}
+</script>
+
 </body>
 </html>

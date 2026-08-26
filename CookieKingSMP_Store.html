@@ -1,38 +1,60 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CookieKingSMP — Магазин</title>
+  <title>CookieKingSMP — Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-color: #0b0b0d;
-      --card-bg: #1b1b1e;
+      --bg-color: #090a0f;
+      --card-bg: rgba(23, 25, 35, 0.85);
       --text-main: #ffffff;
-      --text-sub: #999999;
+      --text-sub: #a0a6b8;
       --accent: #168cff;
-      --accent-hover: #0e6edb;
-      --border-color: #333333;
-      --modal-bg: #1b1b1e;
-      --input-bg: #0b0b0d;
+      --accent-hover: #0077ff;
+      --accent-glow: rgba(22, 140, 255, 0.35);
+      --border-color: #2a2e3d;
+      --modal-bg: #14161f;
+      --input-bg: #0d0e14;
+      --mc-font: 'Press Start 2P', monospace;
     }
 
     [data-theme="light"] {
-      --bg-color: #f4f5f7;
-      --card-bg: #ffffff;
+      --bg-color: #f0f2f7;
+      --card-bg: rgba(255, 255, 255, 0.9);
       --text-main: #111111;
-      --text-sub: #666666;
+      --text-sub: #555555;
       --accent: #168cff;
       --accent-hover: #0b73dc;
-      --border-color: #e0e0e0;
+      --accent-glow: rgba(22, 140, 255, 0.2);
+      --border-color: #d1d5e0;
       --modal-bg: #ffffff;
       --input-bg: #f4f5f7;
     }
 
-    * { box-sizing: border-box; transition: background 0.3s, color 0.3s, border-color 0.3s; }
-    body { margin: 0; background: var(--bg-color); color: var(--text-main); font-family: 'Segoe UI', Arial, sans-serif; text-align: center; overflow-x: hidden; }
+    * { box-sizing: border-box; transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.2s, transform 0.2s; }
 
-    /* Экран загрузки (Preloader) */
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      background-image:
+        radial-gradient(circle at 50% 10%, rgba(22, 140, 255, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(255, 108, 0, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Rubik', sans-serif;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    h1, h2, .logo, .name, .price, .loader-cookie, #lang-btn, .ip, .modal h3 {
+      font-family: var(--mc-font);
+    }
+
     #preloader {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -42,8 +64,9 @@
       transition: opacity 0.5s ease, visibility 0.5s;
     }
     .loader-cookie {
-      font-size: 70px;
+      font-size: 60px;
       animation: spinCookie 1.5s infinite ease-in-out;
+      filter: drop-shadow(0 0 20px rgba(255, 157, 66, 0.6));
     }
     @keyframes spinCookie {
       0% { transform: scale(0.8) rotate(0deg); }
@@ -51,17 +74,31 @@
       100% { transform: scale(0.8) rotate(360deg); }
     }
 
-    /* Шапка с переключателями */
-    .header-controls { display: flex; justify-content: flex-end; gap: 10px; max-width: 900px; margin: 20px auto 0; padding: 0 20px; }
-    .control-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
-    .control-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .header-controls { display: flex; justify-content: flex-end; gap: 12px; max-width: 900px; margin: 20px auto 0; padding: 0 20px; }
+    .control-btn, .control-select {
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+      outline: none;
+      backdrop-filter: blur(10px);
+    }
+    .control-btn:hover, .control-select:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px var(--accent-glow);
+    }
 
     .container { max-width: 900px; margin: auto; padding: 20px 20px 60px; }
     .logo {
-      width: 80px; height: 80px; border-radius: 50%; margin: auto;
+      width: 85px; height: 85px; border-radius: 50%; margin: auto;
       background: linear-gradient(135deg, #ff9d42, #ff6c00);
       display: flex; align-items: center; justify-content: center;
-      font-size: 40px; box-shadow: 0 0 25px rgba(255, 157, 66, 0.5);
+      font-size: 42px; box-shadow: 0 0 30px rgba(255, 120, 0, 0.5);
       animation: floatLogo 3s infinite ease-in-out;
     }
     @keyframes floatLogo {
@@ -70,85 +107,163 @@
       100% { transform: translateY(0px); }
     }
 
-    h1 { font-size: 42px; margin: 20px 0 10px; }
-    .subtitle { color: var(--text-sub); font-size: 16px; }
-    .ip { color: var(--accent); margin: 15px 0 30px; font-weight: bold; letter-spacing: 0.5px; }
+    h1 { font-size: 26px; margin: 25px 0 15px; line-height: 1.4; text-shadow: 0 0 15px rgba(22, 140, 255, 0.3); }
+    .subtitle { color: var(--text-sub); font-size: 15px; }
 
-    h2 { font-size: 28px; margin-top: 40px; border-bottom: 2px solid var(--border-color); display: inline-block; padding-bottom: 8px; }
+    .ip {
+      display: inline-block;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 20px;
+      color: var(--accent);
+      margin: 20px 0 30px;
+      font-weight: bold;
+      font-size: 12px;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
 
-    /* Карточки с анимацией всплытия */
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+    h2 {
+      font-size: 18px;
+      margin-top: 45px;
+      border-bottom: 3px solid var(--accent);
+      display: inline-block;
+      padding-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 30px; }
     .card {
-      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px;
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 28px 24px;
       display: flex; flex-direction: column; justify-content: space-between;
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s, box-shadow 0.3s;
+      backdrop-filter: blur(10px);
       opacity: 0; transform: translateY(30px);
       animation: fadeInUp 0.6s forwards;
     }
-    .card:nth-child(1) { animation-delay: 0.2s; }
-    .card:nth-child(2) { animation-delay: 0.4s; }
-    .card:nth-child(3) { animation-delay: 0.6s; }
+    .card:nth-child(1) { animation-delay: 0.15s; }
+    .card:nth-child(2) { animation-delay: 0.3s; }
+    .card:nth-child(3) { animation-delay: 0.45s; }
 
-    .card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--accent); box-shadow: 0 15px 30px rgba(22, 140, 255, 0.2); }
-    .name { font-size: 25px; font-weight: bold; } .name span { color: var(--accent); }
-    ul { text-align: left; color: var(--text-sub); line-height: 2; padding-left: 20px; margin: 20px 0; flex-grow: 1; }
-    .price { border: 1px solid var(--accent); padding: 12px; border-radius: 8px; color: var(--accent); font-weight: bold; font-size: 18px; }
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: 0 15px 35px var(--accent-glow);
+    }
+
+    .name { font-size: 15px; line-height: 1.4; letter-spacing: 0.5px; } .name span { color: var(--accent); }
+    ul { text-align: left; color: var(--text-sub); line-height: 2.2; padding-left: 20px; margin: 22px 0; flex-grow: 1; font-size: 14px; }
+
+    .price {
+      background: rgba(22, 140, 255, 0.08);
+      border: 2px solid var(--accent);
+      padding: 12px 8px;
+      border-radius: 12px;
+      color: var(--accent);
+      font-size: 11px;
+      line-height: 1.5;
+      box-shadow: inset 0 0 10px var(--accent-glow);
+    }
 
     button.buy-btn {
-      margin-top: 15px; width: 100%; padding: 12px; background: var(--accent); border: 0; border-radius: 10px;
-      color: white; font-weight: bold; font-size: 16px; cursor: pointer;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      margin-top: 15px; width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      border: 0; border-radius: 12px;
+      color: white; font-weight: bold; font-size: 13px; cursor: pointer;
+      font-family: var(--mc-font); text-transform: uppercase;
+      box-shadow: 0 4px 15px var(--accent-glow);
     }
-    button.buy-btn:hover { background: var(--accent-hover); box-shadow: 0 5px 15px rgba(22, 140, 255, 0.4); }
+    button.buy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--accent-glow);
+    }
     button.buy-btn:active { transform: scale(0.96); }
 
-    /* Ползунки */
     .custom-buy-box {
-      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; margin-top: 20px; text-align: left;
-      opacity: 0; transform: translateY(30px); animation: fadeInUp 0.6s forwards 0.8s;
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 30px;
+      margin-top: 25px;
+      text-align: left;
+      backdrop-filter: blur(10px);
+      opacity: 0; transform: translateY(30px); animation: fadeInUp 0.6s forwards 0.6s;
     }
     .slider-group { margin: 20px 0; }
-    .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .slider-header { display: flex; justify-content: space-between; align-items: center; }
     .slider-header label { font-weight: bold; font-size: 16px; }
-    .slider-header input[type="number"] { width: 120px; padding: 8px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); font-size: 16px; font-weight: bold; text-align: right; outline: none; }
-    .slider-header input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(22, 140, 255, 0.3); }
-    input[type="range"] { width: 100%; height: 8px; border-radius: 5px; background: var(--input-bg); outline: none; accent-color: var(--accent); cursor: pointer; }
+
+    .slider-header input[type="number"], .donate-input-box input[type="number"] {
+      width: 160px; padding: 12px; background: var(--input-bg);
+      border: 2px solid var(--border-color); border-radius: 12px;
+      color: var(--accent); font-size: 14px; font-weight: bold;
+      text-align: center; outline: none; font-family: var(--mc-font);
+    }
+    .slider-header input[type="number"]:focus, .donate-input-box input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%; height: 12px; border-radius: 6px;
+      background: var(--input-bg); outline: none; cursor: pointer;
+      border: 1px solid var(--border-color);
+      margin-top: 15px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 26px; height: 26px; border-radius: 8px;
+      background: var(--accent); cursor: pointer;
+      box-shadow: 0 0 12px var(--accent);
+      transition: transform 0.1s, background 0.2s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: var(--accent-hover);
+    }
 
     @keyframes fadeInUp {
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Модальное окно */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 100; }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); justify-content: center; align-items: center; z-index: 100; }
     .modal {
-      background: var(--modal-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; width: 90%; max-width: 400px; text-align: left;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5); transform: scale(0.7); opacity: 0; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+      background: var(--modal-bg); border: 2px solid var(--border-color); border-radius: 20px; padding: 32px; width: 90%; max-width: 420px; text-align: left;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7); transform: scale(0.7); opacity: 0; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
     }
     .modal-overlay.active { display: flex; }
     .modal-overlay.active .modal { transform: scale(1); opacity: 1; }
 
-    .modal h3 { margin-top: 0; font-size: 22px; }
+    .modal h3 { margin-top: 0; font-size: 15px; line-height: 1.4; color: var(--accent); }
     .modal p { color: var(--text-sub); font-size: 14px; margin-bottom: 20px; }
-    .modal input[type="text"] { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); font-size: 16px; margin-bottom: 15px; outline: none; }
+    .modal input[type="text"] { width: 100%; padding: 14px; background: var(--input-bg); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-main); font-size: 16px; margin-bottom: 20px; outline: none; }
     .modal input[type="text"]:focus { border-color: var(--accent); }
-    .modal-buttons { display: flex; gap: 10px; }
-    .btn-close { background: var(--border-color); color: var(--text-main); flex: 1; border: 0; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-    .btn-submit { flex: 2; }
+    .modal-buttons { display: flex; gap: 12px; }
+    .btn-close { background: var(--border-color); color: var(--text-main); flex: 1; border: 0; padding: 14px; border-radius: 12px; cursor: pointer; font-weight: bold; }
+    .btn-submit { flex: 2; margin-top: 0; }
 
-    footer { margin-top: 60px; padding: 30px 20px; border-top: 1px solid var(--border-color); color: var(--text-sub); font-size: 13px; line-height: 1.6; }
+    footer { margin-top: 70px; padding: 30px 20px; border-top: 1px solid var(--border-color); color: var(--text-sub); font-size: 13px; line-height: 1.6; }
   </style>
 </head>
 <body>
 
-  <!-- Прелоадер -->
   <div id="preloader">
     <div class="loader-cookie">🍪</div>
-    <p style="margin-top: 15px; font-weight: bold; color: var(--accent);">Loading Store...</p>
+    <p style="margin-top: 20px; font-weight: bold; color: var(--accent); font-family: var(--mc-font); font-size: 12px;">Loading Store...</p>
   </div>
 
   <div class="header-controls">
-    <button class="control-btn" id="curr-btn" onclick="toggleCurrency()">USD ($)</button>
-    <button class="control-btn" id="lang-btn" onclick="toggleLang()">ENG</button>
+    <button class="control-btn" id="lang-btn" onclick="toggleLanguage()">🌐 ENG</button>
+
+    <select class="control-select" id="curr-select" onchange="onCurrChange(this.value)">
+      <option value="USD" selected>USD ($)</option>
+      <option value="RUB">RUB (₽)</option>
+      <option value="EUR">EUR (€)</option>
+    </select>
+
     <button class="control-btn" id="theme-btn" onclick="toggleTheme()">🌙 Dark</button>
   </div>
 
@@ -156,7 +271,7 @@
     <div class="logo">🍪</div>
     <h1>CookieKing<span>SMP</span></h1>
     <div class="subtitle" id="t-subtitle">Upgrade your experience on CookieKingSMP</div>
-    <div class="ip">IP: play.cookieking.smp</div>
+    <div class="ip">IP: cookiekingsmp.abrdns.com</div>
 
     <h2 id="t-ranks-title">Ranks</h2>
     <div class="cards">
@@ -170,8 +285,8 @@
           </ul>
         </div>
         <div>
-          <div class="price" id="price-rank-1">$5.00 / month</div>
-          <button class="buy-btn" id="t-buy-1" onclick="openPayModal('COOKIE VIP', 500)">Buy</button>
+          <div class="price" id="price-rank-1">$2.16 / forever</div>
+          <button class="buy-btn" id="t-buy-1" onclick="openPayModal('COOKIE VIP', 199, true)">Buy</button>
         </div>
       </div>
 
@@ -185,8 +300,8 @@
           </ul>
         </div>
         <div>
-          <div class="price" id="price-rank-2">$10.00 / month</div>
-          <button class="buy-btn" id="t-buy-2" onclick="openPayModal('COOKIE PREMIUM', 1000)">Buy</button>
+          <div class="price" id="price-rank-2">$4.34 / forever</div>
+          <button class="buy-btn" id="t-buy-2" onclick="openPayModal('COOKIE PREMIUM', 399, true)">Buy</button>
         </div>
       </div>
 
@@ -200,41 +315,39 @@
           </ul>
         </div>
         <div>
-          <div class="price" id="price-rank-3">$15.00 / month</div>
-          <button class="buy-btn" id="t-buy-3" onclick="openPayModal('COOKIE KING', 1500)">Buy</button>
+          <div class="price" id="price-rank-3">$9.23 / forever</div>
+          <button class="buy-btn" id="t-buy-3" onclick="openPayModal('COOKIE KING', 849, true)">Buy</button>
         </div>
       </div>
     </div>
 
-    <!-- Монеты -->
     <h2 id="t-coins-title">In-Game Coins</h2>
     <div class="custom-buy-box">
       <div class="slider-group">
         <div class="slider-header">
-          <label id="t-coins-label">CookieCoins (1 Coin = 1.2 RUB):</label>
+          <label id="t-coins-label">CookieCoins:</label>
           <input type="number" id="coin-input" value="100" min="1" max="10000" oninput="syncCoins(this.value)">
         </div>
         <input type="range" id="coin-slider" value="100" min="1" max="10000" step="1" oninput="syncCoins(this.value)">
       </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-        <div class="price" id="price-coins">$1.20</div>
-        <button class="buy-btn" id="t-buy-coins" style="margin-top:0; width: 200px;" onclick="buyCoins()">Buy Coins</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
+        <div class="price" id="price-coins">$1.96</div>
+        <button class="buy-btn" id="t-buy-coins" style="margin-top:0; width: 220px;" onclick="buyCoins()">Buy Coins</button>
       </div>
     </div>
 
-    <!-- Донат -->
     <h2 id="t-donate-title">Support Server</h2>
     <div class="custom-buy-box">
-      <div class="slider-group">
-        <div class="slider-header">
-          <label id="t-donate-label">Donation Amount:</label>
-          <input type="number" id="donate-input" value="100" min="50" max="10000" oninput="syncDonate(this.value)">
+      <div class="slider-header">
+        <label id="t-donate-label">Donation Amount:</label>
+        <div class="donate-input-box">
+          <input type="number" id="donate-input" value="5" min="1" oninput="updateDonateDisplay()">
         </div>
-        <input type="range" id="donate-slider" value="100" min="50" max="10000" step="50" oninput="syncDonate(this.value)">
       </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-        <div class="price" id="price-donate">$1.00</div>
-        <button class="buy-btn" id="t-buy-donate" style="margin-top:0; width: 200px;" onclick="buyDonate()">Donate</button>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
+        <div class="price" id="price-donate">$5.00</div>
+        <button class="buy-btn" id="t-buy-donate" style="margin-top:0; width: 220px;" onclick="buyDonate()">Donate</button>
       </div>
     </div>
 
@@ -244,21 +357,21 @@
     </footer>
   </div>
 
-  <!-- Модальное окно -->
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <h3 id="modal-title">Purchase</h3>
       <p id="modal-desc">Enter your Minecraft nickname to receive the purchase:</p>
 
-      <form action="https://pay.freekassa.ru/" method="GET" target="_blank">
-        <input type="hidden" name="m" value="YOUR_MERCHANT_ID">
-        <input type="hidden" name="oa" id="form-amount" value="0">
-        <input type="hidden" name="o" id="form-pay-id" value="">
-        <input type="hidden" name="currency" value="RUB">
-        <input type="hidden" name="i" value="">
+      <form action="https://anypay.io/merchant" method="GET" target="_blank">
+        <input type="hidden" name="merchant_id" value="YOUR_MERCHANT_ID">
+        <input type="hidden" name="amount" id="form-amount" value="0">
+        <input type="hidden" name="currency" id="form-currency" value="RUB">
+        <input type="hidden" name="pay_id" id="form-pay-id" value="">
         <input type="hidden" name="desc" id="form-desc" value="">
 
-        <input type="text" id="input-nick" name="us_nickname" placeholder="Your Minecraft Nickname" required>
+        <div id="nick-container">
+          <input type="text" id="input-nick" name="profit_variable" placeholder="Your Minecraft Nickname" required>
+        </div>
 
         <div class="modal-buttons">
           <button type="button" class="btn-close" id="t-modal-cancel" onclick="closePayModal()">Cancel</button>
@@ -269,12 +382,14 @@
   </div>
 
   <script>
-    const RUB_PER_USD = 100;
+    const RUB_PER_USD = 92;
+    const RUB_PER_EUR = 100;
+
     let currentLang = 'ENG';
     let currentCurr = 'USD';
     let currentTheme = 'dark';
 
-    const rankPricesRUB = { rank1: 500, rank2: 1000, rank3: 1500 };
+    const rankPricesRUB = { rank1: 199, rank2: 399, rank3: 849 };
 
     const i18n = {
       ENG: {
@@ -282,15 +397,18 @@
         ranksTitle: "Ranks",
         coinsTitle: "In-Game Coins",
         donateTitle: "Support Server",
-        coinsLabel: "CookieCoins (1 Coin = 1.2 RUB):",
+        coinsLabelPrefix: "CookieCoins (1 Coin = ",
         donateLabel: "Donation Amount:",
         buyBtn: "Buy",
         buyCoinsBtn: "Buy Coins",
         donateBtn: "Donate",
-        modalDesc: "Enter your Minecraft nickname to receive the purchase:",
+        modalDescItem: "Enter your Minecraft nickname to receive the purchase:",
+        modalDescDonate: "Enter your nickname (optional) or donate anonymously:",
         modalCancel: "Cancel",
         modalPay: "Pay",
-        nickPlaceholder: "Your Minecraft Nickname",
+        nickRequiredPlaceholder: "Your Minecraft Nickname (required)",
+        nickOptionalPlaceholder: "Your Minecraft Nickname (optional)",
+        foreverText: "forever",
         c1: ["5 Homes", "30 Auction Slots", "Special Kit"],
         c2: ["15 Homes", "70 Auction Slots", "Premium Kit"],
         c3: ["50 Homes", "150 Auction Slots", "Ultimate Kit"]
@@ -300,15 +418,18 @@
         ranksTitle: "Привилегии",
         coinsTitle: "Игровая валюта",
         donateTitle: "Поддержать проект",
-        coinsLabel: "CookieCoins (1 Коин = 1.2 руб):",
+        coinsLabelPrefix: "CookieCoins (1 Коин = ",
         donateLabel: "Сумма поддержки:",
         buyBtn: "Купить",
         buyCoinsBtn: "Купить монеты",
         donateBtn: "Поддержать",
-        modalDesc: "Введите ваш ник в игре для выдачи доната:",
+        modalDescItem: "Введите ваш ник в игре для выдачи товара:",
+        modalDescDonate: "Введите ник (по желанию) или оставьте пустым:",
         modalCancel: "Отмена",
         modalPay: "Оплатить",
-        nickPlaceholder: "Твой ник в Minecraft",
+        nickRequiredPlaceholder: "Твой ник в Minecraft (обязательно)",
+        nickOptionalPlaceholder: "Твой ник в Minecraft (необязательно)",
+        foreverText: "навсегда",
         c1: ["5 Точек дома", "30 Слотов на аукционе", "Особый Кит"],
         c2: ["15 Точек дома", "70 Слотов на аукционе", "Премиум Кит"],
         c3: ["50 Точек дома", "150 Слотов на аукционе", "Ультимейт Кит"]
@@ -318,18 +439,25 @@
     function formatPrice(amountRUB) {
       if (currentCurr === 'USD') {
         return '$' + (amountRUB / RUB_PER_USD).toFixed(2);
+      } else if (currentCurr === 'EUR') {
+        return '€' + (amountRUB / RUB_PER_EUR).toFixed(2);
       }
-      return amountRUB + ' RUB';
+      return amountRUB + ' ₽';
     }
 
     function updateUI() {
       const t = i18n[currentLang];
 
+      document.getElementById('lang-btn').innerText = currentLang === 'RUS' ? '🌐 RUS' : '🌐 ENG';
+      document.getElementById('curr-select').value = currentCurr;
+
       document.getElementById('t-subtitle').innerText = t.subtitle;
       document.getElementById('t-ranks-title').innerText = t.ranksTitle;
       document.getElementById('t-coins-title').innerText = t.coinsTitle;
       document.getElementById('t-donate-title').innerText = t.donateTitle;
-      document.getElementById('t-coins-label').innerText = t.coinsLabel;
+
+      const oneCoinPrice = formatPrice(1.8);
+      document.getElementById('t-coins-label').innerText = t.coinsLabelPrefix + oneCoinPrice + "):";
       document.getElementById('t-donate-label').innerText = t.donateLabel;
 
       document.getElementById('t-buy-1').innerText = t.buyBtn;
@@ -340,8 +468,6 @@
 
       document.getElementById('t-modal-cancel').innerText = t.modalCancel;
       document.getElementById('t-modal-pay').innerText = t.modalPay;
-      document.getElementById('modal-desc').innerText = t.modalDesc;
-      document.getElementById('input-nick').placeholder = t.nickPlaceholder;
 
       for(let i=1; i<=3; i++) {
         document.getElementById(`t-c${i}-1`).innerText = t[`c${i}`][0];
@@ -349,23 +475,31 @@
         document.getElementById(`t-c${i}-3`).innerText = t[`c${i}`][2];
       }
 
-      document.getElementById('price-rank-1').innerText = formatPrice(rankPricesRUB.rank1) + ' / month';
-      document.getElementById('price-rank-2').innerText = formatPrice(rankPricesRUB.rank2) + ' / month';
-      document.getElementById('price-rank-3').innerText = formatPrice(rankPricesRUB.rank3) + ' / month';
+      document.getElementById('price-rank-1').innerText = formatPrice(rankPricesRUB.rank1) + ' / ' + t.foreverText;
+      document.getElementById('price-rank-2').innerText = formatPrice(rankPricesRUB.rank2) + ' / ' + t.foreverText;
+      document.getElementById('price-rank-3').innerText = formatPrice(rankPricesRUB.rank3) + ' / ' + t.foreverText;
 
       syncCoins(document.getElementById('coin-input').value);
-      syncDonate(document.getElementById('donate-input').value);
+      updateDonateDisplay();
     }
 
-    function toggleCurrency() {
-      currentCurr = currentCurr === 'USD' ? 'RUB' : 'USD';
-      document.getElementById('curr-btn').innerText = currentCurr === 'USD' ? 'USD ($)' : 'RUB (₽)';
+    function toggleLanguage() {
+      if (currentLang === 'RUS') {
+        currentLang = 'ENG';
+        currentCurr = 'USD';
+        document.getElementById('donate-input').value = '5';
+      } else {
+        currentLang = 'RUS';
+        currentCurr = 'RUB';
+        document.getElementById('donate-input').value = '300';
+      }
       updateUI();
     }
 
-    function toggleLang() {
-      currentLang = currentLang === 'ENG' ? 'RUS' : 'ENG';
-      document.getElementById('lang-btn').innerText = currentLang;
+    function onCurrChange(curr) {
+      currentCurr = curr;
+      if (curr === 'RUB') document.getElementById('donate-input').value = '300';
+      else document.getElementById('donate-input').value = '5';
       updateUI();
     }
 
@@ -376,44 +510,67 @@
     }
 
     function syncCoins(val) {
-      val = Math.max(1, Math.min(10000, parseInt(val) || 1));
-      document.getElementById('coin-input').value = val;
-      document.getElementById('coin-slider').value = val;
-      const priceRUB = Math.round(val * 1.2);
+      let num = parseInt(val);
+      if (isNaN(num)) num = 1;
+      num = Math.max(1, Math.min(10000, num));
+
+      document.getElementById('coin-input').value = num;
+      document.getElementById('coin-slider').value = num;
+      const priceRUB = Math.round(num * 1.8);
       document.getElementById('price-coins').innerText = formatPrice(priceRUB);
     }
 
-    function syncDonate(val) {
-      val = Math.max(50, Math.min(10000, parseInt(val) || 50));
-      document.getElementById('donate-input').value = val;
-      document.getElementById('donate-slider').value = val;
-      document.getElementById('price-donate').innerText = formatPrice(val);
+    function updateDonateDisplay() {
+      let num = parseFloat(document.getElementById('donate-input').value);
+      if (isNaN(num) || num < 1) num = 1;
+
+      let symbol = '$';
+      if (currentCurr === 'RUB') symbol = '₽';
+      if (currentCurr === 'EUR') symbol = '€';
+
+      if (currentCurr === 'RUB') {
+        document.getElementById('price-donate').innerText = Math.round(num) + ' ' + symbol;
+      } else {
+        document.getElementById('price-donate').innerText = symbol + num.toFixed(2);
+      }
     }
 
     function buyCoins() {
       const coins = document.getElementById('coin-input').value;
-      const priceRUB = Math.round(coins * 1.2);
-      openPayModal(`${coins} CookieCoins`, priceRUB);
+      const priceRUB = Math.round(coins * 1.8);
+      openPayModal(`${coins} CookieCoins`, priceRUB, true);
     }
 
     function buyDonate() {
-      const priceRUB = parseInt(document.getElementById('donate-input').value);
-      openPayModal(`Support Project`, priceRUB);
+      let inputVal = parseFloat(document.getElementById('donate-input').value) || 5;
+      openPayModal(`Support Project`, inputVal, false);
     }
 
-    function openPayModal(itemName, priceRUB) {
+    function openPayModal(itemName, amount, requireNick) {
+      const t = i18n[currentLang];
       document.getElementById('modal-title').innerText = itemName;
-      document.getElementById('form-amount').value = priceRUB;
+
+      document.getElementById('form-amount').value = amount;
+      document.getElementById('form-currency').value = currentCurr;
       document.getElementById('form-desc').value = itemName + ' on CookieKingSMP';
       document.getElementById('form-pay-id').value = Date.now();
 
-      const modalOverlay = document.getElementById('modal');
-      modalOverlay.classList.add('active');
+      const nickInput = document.getElementById('input-nick');
+      if (requireNick) {
+        document.getElementById('modal-desc').innerText = t.modalDescItem;
+        nickInput.required = true;
+        nickInput.placeholder = t.nickRequiredPlaceholder;
+      } else {
+        document.getElementById('modal-desc').innerText = t.modalDescDonate;
+        nickInput.required = false;
+        nickInput.placeholder = t.nickOptionalPlaceholder;
+      }
+
+      document.getElementById('modal').classList.add('active');
     }
 
     function closePayModal() {
-      const modalOverlay = document.getElementById('modal');
-      modalOverlay.classList.remove('active');
+      document.getElementById('modal').classList.remove('active');
     }
 
     window.onclick = function(event) {

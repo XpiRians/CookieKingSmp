@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CookieKingSMP — Vanilla+ Minecraft Server</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #131419;
+            --bg-soft: #1a1c22;
+            --panel: #1d1f26;
+            --panel-2: #22252d;
+            --border: #2d303a;
+            --border-hover: #3c4050;
+            --text: #f3f2ee;
+            --text-sub: #94969f;
+            --text-faint: #5c5e68;
+            --amber: #ff9d42;
+            --amber-soft: rgba(255, 157, 66, 0.14);
+            --mint: #5fe0a0;
+            --mint-soft: rgba(95, 224, 160, 0.14);
+            --sky: #4fb8e8;
+            --sky-soft: rgba(79, 184, 232, 0.14);
+            --violet: #9d85f0;
+            --violet-soft: rgba(157, 133, 240, 0.14);
+            --red: #f0605f;
+            --red-soft: rgba(240, 96, 95, 0.14);
+        }
+
+        [data-theme="light"] {
+            --bg: #eef0f3;
+            --bg-soft: #e4e7ec;
+            --panel: #ffffff;
+            --panel-2: #f7f8fa;
+            --border: #dde1e7;
+            --border-hover: #c7cdd6;
+            --text: #14161b;
+            --text-sub: #5c616c;
+            --text-faint: #9aa0aa;
+            --amber: #dd7a1e;
+            --amber-soft: rgba(221, 122, 30, 0.10);
+            --mint: #1fa870;
+            --mint-soft: rgba(31, 168, 112, 0.10);
+            --sky: #1c8fc4;
+            --sky-soft: rgba(28, 143, 196, 0.10);
+            --violet: #7357d6;
+            --violet-soft: rgba(115, 87, 214, 0.10);
+            --red: #d84544;
+            --red-soft: rgba(216, 69, 68, 0.10);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Sora', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 64px 20px 44px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container { max-width: 1160px; width: 100%; }
+
+        /* ===== Nav ===== */
+        .nav-controls { position: fixed; top: 22px; right: 22px; display: flex; gap: 10px; z-index: 100; }
+
+        .ctrl-btn {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: 'Sora', sans-serif;
+            cursor: pointer;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .ctrl-btn:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+
+        /* ===== Hero ===== */
+        .header { text-align: center; margin-bottom: 34px; }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--amber);
+            background: var(--amber-soft);
+            border: 1px solid rgba(255, 157, 66, 0.3);
+            padding: 6px 14px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            margin-bottom: 22px;
+        }
+        .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+
+        .brand-logo {
+            font-size: 50px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1;
+            margin-bottom: 14px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .brand-logo .accent-bar {
+            display: block;
+            width: 64px;
+            height: 5px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--amber), var(--mint));
+            margin: 18px auto 0;
+        }
+
+        .brand-tagline { color: var(--text-sub); font-size: 16px; font-weight: 500; }
+
+        /* ===== Notice ===== */
+        .beta-banner {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--amber);
+            border-radius: 14px;
+            padding: 18px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .beta-icon-wrapper {
+            width: 40px; height: 40px;
+            background: var(--amber-soft);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0; color: var(--amber);
+        }
+        .beta-text-title { font-size: 12.5px; font-weight: 700; color: var(--amber); letter-spacing: 0.6px; text-transform: uppercase; }
+        .beta-text-desc { font-size: 14px; color: var(--text-sub); margin-top: 3px; line-height: 1.5; }
+
+        /* ===== Grid ===== */
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 100%; }
+
+        /* ===== Card base — flat, crisp, top accent stripe ===== */
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s ease, transform 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            color: var(--text);
+            min-height: 246px;
+            cursor: pointer;
+        }
+        .card::before {
+            content: "";
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--accent, var(--amber));
+        }
+        .card:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+
+        .card-bg {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1;
+            filter: brightness(0.4) saturate(1.05);
+        }
+        .card:hover .card-bg { transform: scale(1.06); }
+
+        .card-overlay {
+            position: absolute; inset: 0; z-index: 2;
+            background: linear-gradient(180deg, rgba(19,20,25,0.35) 0%, rgba(19,20,25,0.92) 100%);
+        }
+        [data-theme="light"] .card-overlay { background: linear-gradient(180deg, rgba(19,20,25,0.45) 0%, rgba(19,20,25,0.94) 100%); }
+
+        .card-content { position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; justify-content: space-between; color: #f3f2ee; }
+
+        .card-main .card-bg { background-image: url('https://i.ibb.co/5Wnj9GbG/image.jpg'); }
+        .card-store .card-bg { background-image: url('https://i.ibb.co/ymBFwYQC/image.jpg'); }
+        .card-media .card-bg { background-image: url('https://i.ibb.co/zhTHmN50/image.jpg'); }
+
+        .card-main { --accent: var(--amber); }
+        .card-store { --accent: var(--amber); }
+        .card-telegram { --accent: var(--sky); }
+        .card-media { --accent: var(--violet); }
+        .card-stats { --accent: var(--violet); }
+        .card-voice { --accent: var(--mint); }
+        .card-join { --accent: var(--amber); }
+
+        /* ===== Badge ===== */
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 7px 13px;
+            background: var(--mint-soft);
+            border: 1px solid rgba(95, 224, 160, 0.35);
+            color: var(--mint);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 700;
+            border-radius: 999px;
+            align-self: flex-start;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; background-color: var(--mint); box-shadow: 0 0 8px var(--mint); animation: pulse-dot 2s infinite; }
+        @keyframes pulse-dot {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(95,224,160,0.6); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(95,224,160,0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(95,224,160,0); }
+        }
+
+        /* ===== IP copy box ===== */
+        .ip-box {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.14);
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 12.5px;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            display: inline-flex; align-items: center; gap: 11px;
+            transition: all 0.2s ease;
+            align-self: flex-start;
+            margin-top: 15px;
+            color: #fff;
+        }
+        .ip-box:hover { background: var(--amber); border-color: var(--amber); color: #1a1200; }
+
+        /* ===== Telegram card ===== */
+        .card-telegram {
+            background: linear-gradient(150deg, #1f6fa8, #164f7c);
+            border-color: rgba(79, 184, 232, 0.35);
+            align-items: center; justify-content: center; text-align: center;
+        }
+        .card-telegram .card-overlay { display: none; }
+        .telegram-icon-bg {
+            width: 58px; height: 58px;
+            background: rgba(255,255,255,0.14);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .telegram-icon { width: 30px; height: 30px; fill: #ffffff; }
+        .card-telegram:hover .telegram-icon-bg { transform: scale(1.1) rotate(-6deg); background: rgba(255,255,255,0.22); }
+
+        /* ===== Voice chat card ===== */
+        .card-voice { grid-row: span 2; background: var(--panel); cursor: default; }
+        .dropdown-container { position: relative; margin-top: 22px; width: 100%; }
+
+        .download-btn {
+            background: var(--mint);
+            color: #0b2015;
+            padding: 15px 22px;
+            border-radius: 11px;
+            font-weight: 700;
+            font-size: 13.5px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            transition: filter 0.2s ease, transform 0.2s ease;
+            font-family: 'Sora', sans-serif;
+        }
+        .download-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+        .dropdown-arrow { font-size: 9px; transition: transform 0.3s ease; }
+
+        .dropdown-menu {
+            position: absolute; bottom: 100%; left: 0; width: 100%; margin-bottom: 10px;
+            background: var(--panel-2);
+            border: 1px solid var(--border-hover);
+            border-radius: 12px;
+            padding: 7px;
+            box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+            opacity: 0; visibility: hidden; transform: translateY(8px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 50;
+        }
+        .dropdown-container:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-container:hover .dropdown-arrow { transform: rotate(180deg); }
+
+        .dropdown-item { display: flex; align-items: center; gap: 11px; padding: 11px 13px; border-radius: 8px; text-decoration: none; color: var(--text); transition: background 0.2s ease; }
+        .dropdown-item:hover { background: var(--mint-soft); }
+        .item-icon { font-size: 16px; }
+        .item-title { font-weight: 700; font-size: 12.5px; line-height: 1.2; }
+        .item-sub { font-size: 10.5px; color: var(--text-sub); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+        .fabric-tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            margin-top: 12px; padding: 9px 14px; border-radius: 9px;
+            background: var(--amber-soft);
+            border: 1px solid rgba(255, 157, 66, 0.3);
+            font-size: 11.5px; font-weight: 600; color: var(--amber);
+            width: 100%; justify-content: center; text-align: center;
+        }
+
+        /* ===== Stats card overlay ===== */
+        .card-stats { position: relative; cursor: default; }
+        .stats-overlay {
+            position: absolute; inset: 0;
+            background: rgba(13, 14, 18, 0.94);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s ease; z-index: 4; padding: 20px; text-align: center;
+        }
+        .stats-overlay-title { font-size: 19px; font-weight: 800; color: var(--violet); letter-spacing: 0.5px; }
+        .stats-overlay-sub { font-size: 12.5px; color: var(--text-sub); margin-top: 6px; font-weight: 500; }
+        .card-stats:hover .stats-overlay { opacity: 1; }
+
+        /* ===== How to join ===== */
+        .card-join { grid-column: span 2; cursor: default; }
+
+        .minecraft-input {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            padding: 15px 19px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            color: var(--mint);
+            margin-top: 9px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex; justify-content: space-between; align-items: center; gap: 16px;
+        }
+        .minecraft-input:hover { border-color: var(--amber); }
+
+        .copy-hint { font-family: 'Sora', sans-serif; font-size: 10.5px; color: var(--text-sub); font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap; }
+
+        .card-title { font-size: 25px; font-weight: 700; letter-spacing: -0.4px; line-height: 1.2; }
+        .subtitle { font-size: 13.5px; color: var(--text-sub); margin-top: 8px; font-weight: 500; line-height: 1.5; }
+        .card-content .subtitle { color: rgba(243,242,238,0.65); }
+
+        .footer { margin-top: 46px; text-align: center; color: var(--text-faint); font-size: 12.5px; font-weight: 500; }
+
+        /* ===== Rules Modal ===== */
+        .modal-backdrop {
+            position: fixed; inset: 0;
+            background: rgba(6, 6, 9, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 200; display: none; align-items: center; justify-content: center;
+            padding: 28px 18px; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .modal-backdrop.open { display: flex; opacity: 1; }
+
+        .modal-box {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--amber);
+            border-radius: 18px;
+            max-width: 720px; width: 100%; max-height: 82vh; overflow-y: auto;
+            padding: 36px 38px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+            transform: translateY(14px) scale(0.98);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-backdrop.open .modal-box { transform: translateY(0) scale(1); }
+
+        .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+        .modal-title { font-size: 25px; font-weight: 800; letter-spacing: -0.4px; }
+
+        .modal-close {
+            background: var(--panel-2); border: 1px solid var(--border); color: var(--text-sub);
+            width: 34px; height: 34px; border-radius: 9px;
+            font-size: 14px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        .modal-close:hover { color: var(--red); border-color: var(--red); }
+
+        .rule-section { margin-bottom: 22px; }
+        .rule-section:last-of-type { margin-bottom: 0; }
+        .rule-section-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--amber); margin-bottom: 11px; letter-spacing: 0.6px; text-transform: uppercase; }
+        .rule-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+        .rule-list li { font-size: 13.5px; line-height: 1.6; color: var(--text); padding-left: 18px; position: relative; }
+        .rule-list li::before { content: ""; position: absolute; left: 0; top: 8px; width: 5px; height: 5px; border-radius: 1px; background: var(--amber); }
+        .rule-list li strong { color: var(--text); font-weight: 700; }
+
+        .golden-rule {
+            margin-top: 24px; padding: 16px 20px; border-radius: 12px;
+            background: var(--amber-soft);
+            border: 1px solid rgba(255, 157, 66, 0.3);
+            font-size: 13.5px; font-weight: 600; color: var(--amber); line-height: 1.5;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .card-join { grid-column: span 2; }
+            .card-voice { grid-row: span 1; }
+        }
+
+        @media (max-width: 680px) {
+            body { padding: 30px 16px; }
+            .nav-controls { top: 16px; right: 16px; }
+            .brand-logo { font-size: 34px; }
+            .beta-banner { padding: 14px 18px; gap: 14px; }
+            .beta-icon-wrapper { width: 36px; height: 36px; font-size: 18px; }
+            .bento-grid { grid-template-columns: 1fr; gap: 14px; }
+            .card-join, .card-voice { grid-column: span 1; grid-row: span 1; }
+            .card { padding: 22px; min-height: 200px; border-radius: 14px; }
+            .card-title { font-size: 21px; }
+            .minecraft-input { font-size: 10.5px; padding: 13px; }
+            .modal-box { padding: 24px; border-radius: 16px; }
+            .modal-title { font-size: 20px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-controls">
+        <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+            <span id="theme-icon">🌙</span>
+        </button>
+        <button class="ctrl-btn" id="lang-btn" onclick="toggleLanguage()">
+            🌐 <span id="lang-text">EN</span>
+        </button>
+    </div>
+
+    <div class="container">
+
+        <header class="header">
+            <span class="eyebrow" data-en="Beta · Season One" data-ru="Бета · Сезон 1">Beta · Season One</span>
+            <h1 class="brand-logo">CookieKingSMP<span class="accent-bar"></span></h1>
+            <p class="brand-tagline" data-en="Next-Generation Vanilla+ Minecraft Server" data-ru="Ванильный Minecraft Сервер Нового Поколения">Next-Generation Vanilla+ Minecraft Server</p>
+        </header>
+
+        <div class="beta-banner">
+            <div class="beta-icon-wrapper">⚠️</div>
+            <div>
+                <div class="beta-text-title" data-en="Server in Beta Test Phase" data-ru="Сервер в режиме бета-тестирования">Server in Beta Test Phase</div>
+                <div class="beta-text-desc" data-en="The world border is temporarily restricted. You may encounter minor bugs or server reboots during live testing." data-ru="Границы мира временно ограничены. Возможны небольшие баги, перезагрузки и технические работы.">
+                    The world border is temporarily restricted. You may encounter minor bugs or server reboots during live testing.
+                </div>
+            </div>
+        </div>
+
+        <main class="bento-grid">
+
+            <!-- 1. Main Server Card -->
+            <div class="card card-main">
+                <div class="card-bg"></div>
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <span class="badge" id="online-badge">
+                        <span class="status-dot" id="status-dot"></span>
+                        <span id="online-text">FETCHING DATA...</span>
+                    </span>
+                    <div>
+                        <div class="card-title">CookieKingSMP</div>
+                        <div class="subtitle" data-en="Pure Survival with Quality-of-Life Mods" data-ru="Ванильное выживание с удобными модификациями">Pure Survival with Quality-of-Life Mods</div>
+                    </div>
+                    <div class="ip-box" onclick="copyText('cookiekingsmp.abrdns.com:30827', 'ip-text')">
+                        <span>📋</span>
+                        <span id="ip-text">cookiekingsmp.abrdns.com</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Store Card -->
+            <a href="https://cookiekingsmp.trademc.org/" target="_blank" class="card card-store">
+                <div class="card-bg"></div>
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <span class="badge" style="background: var(--amber-soft); border-color: rgba(255,157,66,0.35); color: var(--amber);" data-en="STORE" data-ru="МАГАЗИН">STORE</span>
+                    <div>
+                        <div class="card-title" data-en="Server Store" data-ru="Магазин Сервера">Server Store</div>
+                        <div class="subtitle" data-en="Unlock Unique Ranks, Keys & Perks" data-ru="Привилегии, ключи от сундуков и косметические бонусы">Unlock Unique Ranks, Keys & Perks</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 3. Telegram Community Card -->
+            <a href="https://t.me/" target="_blank" class="card card-telegram">
+                <div class="card-content" style="align-items: center; justify-content: center;">
+                    <div class="telegram-icon-bg">
+                        <svg class="telegram-icon" viewBox="0 0 24 24">
+                            <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-2.02 9.52c-.15.68-.56.84-1.13.53l-3.11-2.29-1.5 1.44c-.17.17-.31.31-.63.31l.22-3.17 5.77-5.21c.25-.22-.05-.34-.39-.12l-7.13 4.49-3.08-.96c-.67-.21-.68-.67.14-.99l12.03-4.64c.56-.2 1.05.14.83.99z"/>
+                        </svg>
+                    </div>
+                    <div class="card-title" style="font-size: 22px; color: #ffffff;">Telegram</div>
+                    <div class="subtitle" style="color: rgba(255,255,255,0.75);" data-en="Community & Live Updates" data-ru="Чат Сообщества и Новости">Community & Live Updates</div>
+                </div>
+            </a>
+
+            <!-- 4. Rules & Media Card -->
+            <div class="card card-media" onclick="openRulesModal()" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openRulesModal()">
+                <div class="card-bg"></div>
+                <div class="card-overlay"></div>
+                <div class="card-content">
+                    <span class="badge" style="background: var(--violet-soft); border-color: rgba(157,133,240,0.35); color: var(--violet);" data-en="KNOWLEDGE" data-ru="ИНФОРМАЦИЯ">KNOWLEDGE</span>
+                    <div>
+                        <div class="card-title" data-en="Rules & Content" data-ru="Правила и Медиа">Rules & Content</div>
+                        <div class="subtitle" data-en="Guidelines, Media Creators & Clips" data-ru="Правила сервера, медиа-гайд и контент">Guidelines, Media Creators & Clips</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Statistics Card -->
+            <div class="card card-stats">
+                <div class="card-content">
+                    <div class="card-title" data-en="Statistics" data-ru="Статистика">Statistics</div>
+                    <div class="subtitle" data-en="Top Players & World Records" data-ru="Лидеры Сервера и Рекорды">Top Players & World Records</div>
+                </div>
+                <div class="stats-overlay">
+                    <span class="stats-overlay-title" data-en="COMING SOON" data-ru="СКОРО">COMING SOON</span>
+                    <span class="stats-overlay-sub" data-en="Season 1 Progress Tracking" data-ru="Отслеживание прогресса 1 сезона">Season 1 Progress Tracking</span>
+                </div>
+            </div>
+
+            <!-- 6. Voice Chat Card with Dropdown -->
+            <div class="card card-voice">
+                <div class="card-content">
+                    <div>
+                        <span class="badge" style="background: var(--mint-soft); border-color: rgba(95,224,160,0.35); color: var(--mint);" data-en="REQUIRED MOD" data-ru="ОБЯЗАТЕЛЬНЫЙ МОД">REQUIRED MOD</span>
+                        <div style="font-size: 44px; margin: 16px 0 8px 0;">🎙️</div>
+                        <div class="card-title" style="font-size: 22px;">Simple Voice Chat</div>
+                        <div class="subtitle" style="margin-top: 10px; color: var(--text-sub);" data-en="Download the essential proximity voice chat mod to talk directly in-game with nearby players!" data-ru="Скачай мод на голосовой чат для позиционного общения с игроками рядом с тобой!">
+                            Download the essential proximity voice chat mod to talk directly in-game with nearby players!
+                        </div>
+                    </div>
+
+                    <div class="dropdown-container">
+                        <button class="download-btn">
+                            <span style="display:flex; align-items:center; gap:8px;">
+                                <span>📥</span>
+                                <span data-en="Download Mod" data-ru="Скачать Мод">Download Mod</span>
+                            </span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="voicechat.jar" download="voicechat.jar" class="dropdown-item">
+                                <span class="item-icon">⚡</span>
+                                <div>
+                                    <div class="item-title" data-en="Direct Download" data-ru="Скачать с сайта">Скачать с сайта</div>
+                                    <div class="item-sub">voicechat.jar · Fabric 1.21.4</div>
+                                </div>
+                            </a>
+                            <a href="https://www.curseforge.com/minecraft/mc-mods/simple-voice-chat" target="_blank" rel="noopener noreferrer" class="dropdown-item">
+                                <span class="item-icon">🔥</span>
+                                <div>
+                                    <div class="item-title">CurseForge</div>
+                                    <div class="item-sub" data-en="Official Page" data-ru="Официальная страница">Официальная страница</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="fabric-tag">
+                            <span>🧵</span>
+                            <span data-en="Direct download is built for Fabric 1.21.4" data-ru="Прямая загрузка собрана под Fabric 1.21.4">Direct download is built for Fabric 1.21.4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. How To Join Card -->
+            <div class="card card-join">
+                <div class="card-content" style="color: var(--text);">
+                    <div class="card-title" data-en="How To Join" data-ru="Как Подключиться">How To Join</div>
+                    <div style="margin-top: 18px;">
+                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;" data-en="Server Name" data-ru="Название Сервера">Server Name</div>
+                        <div class="minecraft-input" id="name-box" onclick="copyText('CookieKingSMP', 'name-box')">
+                            <span>CookieKingSMP</span>
+                            <span class="copy-hint" data-en="Click to copy" data-ru="Нажми для копирования">Click to copy</span>
+                        </div>
+
+                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-top: 14px;" data-en="Server Address (IP)" data-ru="IP Адрес Сервера">Server Address (IP)</div>
+                        <div class="minecraft-input" id="address-box" onclick="copyText('cookiekingsmp.abrdns.com:30827', 'address-box')">
+                            <span>cookiekingsmp.abrdns.com:30827</span>
+                            <span class="copy-hint" data-en="Click to copy" data-ru="Нажми для копирования">Click to copy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="footer">
+            &copy; 2026 CookieKingSMP. Not affiliated with Mojang Studios or Microsoft.
+        </footer>
+    </div>
+
+    <!-- Rules Modal -->
+    <div class="modal-backdrop" id="rules-modal" onclick="if(event.target === this) closeRulesModal()">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title" data-en="Server Rules" data-ru="Правила Сервера">Server Rules</div>
+                <button class="modal-close" onclick="closeRulesModal()" aria-label="Close">✕</button>
+            </div>
+
+            <div class="rule-section">
+                <div class="rule-section-title" data-en="1. Fair Play & Modifications" data-ru="1. Честная Игра и Модификации">1. Fair Play & Modifications</div>
+                <ul class="rule-list">
+                    <li data-en="<strong>No Unfair Software:</strong> Hacked clients, auto-clickers, macros, and any custom scripts are strictly prohibited." data-ru="<strong>Запрещён нечестный софт:</strong> читерские клиенты, автокликеры, макросы и любые пользовательские скрипты строго запрещены.">
+                        <strong>No Unfair Software:</strong> Hacked clients, auto-clickers, macros, and any custom scripts are strictly prohibited.
+                    </li>
+                    <li data-en="<strong>No Movement Modifications:</strong> Fly, speedhacks, elytra boosts, and similar movement mods are banned." data-ru="<strong>Запрещены моды передвижения:</strong> полёт, ускорение, буст элитр и подобные модификации передвижения запрещены.">
+                        <strong>No Movement Modifications:</strong> Fly, speedhacks, elytra boosts, and similar movement mods are banned.
+                    </li>
+                    <li data-en="<strong>No Utility/Assistance Mods:</strong> Radars, X-Ray / ESP, health/hitbox indicators, Freecam, and auto-place mods are forbidden." data-ru="<strong>Запрещены вспомогательные моды:</strong> радары, X-Ray/ESP, индикаторы здоровья и хитбоксов, Freecam и автоустановка блоков запрещены.">
+                        <strong>No Utility/Assistance Mods:</strong> Radars, X-Ray / ESP, health/hitbox indicators, Freecam, and auto-place mods are forbidden.
+                    </li>
+                    <li data-en="<strong>No Interface & Crafting Mods:</strong> Auto-sorting inventory tools, scroll-wheel tweaks, and custom crafting interface modifications are not allowed." data-ru="<strong>Запрещены моды интерфейса и крафта:</strong> автосортировка инвентаря, твики колеса мыши и изменения интерфейса крафта не допускаются.">
+                        <strong>No Interface & Crafting Mods:</strong> Auto-sorting inventory tools, scroll-wheel tweaks, and custom crafting interface modifications are not allowed.
+                    </li>
+                    <li data-en="<strong>No Seed Searching:</strong> Finding, sharing, or attempting to recreate the world seed is strictly prohibited." data-ru="<strong>Запрещён поиск сида:</strong> поиск, распространение или попытки воссоздать сид мира строго запрещены.">
+                        <strong>No Seed Searching:</strong> Finding, sharing, or attempting to recreate the world seed is strictly prohibited.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="rule-section">
+                <div class="rule-section-title" data-en="2. Economy & Alt Accounts" data-ru="2. Экономика и Альт-Аккаунты">2. Economy & Alt Accounts</div>
+                <ul class="rule-list">
+                    <li data-en="<strong>In-Game Trading Only:</strong> Any real-money trading (RMT / IRL Trading) is strictly forbidden." data-ru="<strong>Только внутриигровая торговля:</strong> любая торговля за реальные деньги (RMT) строго запрещена.">
+                        <strong>In-Game Trading Only:</strong> Any real-money trading (RMT / IRL Trading) is strictly forbidden.
+                    </li>
+                    <li data-en="<strong>No Cross-Server Trading:</strong> Exchanging items or currency from our server for goods on other projects is banned." data-ru="<strong>Запрещена межсерверная торговля:</strong> обмен предметов или валюты нашего сервера на блага других проектов запрещён.">
+                        <strong>No Cross-Server Trading:</strong> Exchanging items or currency from our server for goods on other projects is banned.
+                    </li>
+                    <li data-en="<strong>No External Gambling:</strong> Off-platform casinos, lotteries, and betting are prohibited." data-ru="<strong>Запрещён сторонний гэмблинг:</strong> внешние казино, лотереи и ставки запрещены.">
+                        <strong>No External Gambling:</strong> Off-platform casinos, lotteries, and betting are prohibited.
+                    </li>
+                    <li data-en="<strong>No Boost & Invite Rewards:</strong> Offering in-game items/perks for Discord server boosts or inviting friends is not allowed." data-ru="<strong>Запрещены награды за бусты и приглашения:</strong> предлагать игровые предметы/привилегии за бусты Discord или приглашение друзей нельзя.">
+                        <strong>No Boost & Invite Rewards:</strong> Offering in-game items/perks for Discord server boosts or inviting friends is not allowed.
+                    </li>
+                    <li data-en="<strong>Account Limit:</strong> You may use a maximum of 5 accounts per player (including alt accounts)." data-ru="<strong>Лимит аккаунтов:</strong> разрешено использовать не более 5 аккаунтов на игрока (включая альты).">
+                        <strong>Account Limit:</strong> You may use a maximum of 5 accounts per player (including alt accounts).
+                    </li>
+                </ul>
+            </div>
+
+            <div class="rule-section">
+                <div class="rule-section-title" data-en="3. Bugs & Exploits" data-ru="3. Баги и Эксплойты">3. Bugs & Exploits</div>
+                <ul class="rule-list">
+                    <li data-en="<strong>No Duplication:</strong> Item duping, as well as attempting or building dupe mechanisms, will result in an immediate ban." data-ru="<strong>Запрещён дюп:</strong> дублирование предметов, а также попытки или создание механизмов дюпа ведут к немедленному бану.">
+                        <strong>No Duplication:</strong> Item duping, as well as attempting or building dupe mechanisms, will result in an immediate ban.
+                    </li>
+                    <li data-en="<strong>No Exploiting Vulnerabilities:</strong> Abusing glitches, game bugs, or server errors is strictly forbidden." data-ru="<strong>Запрещена эксплуатация уязвимостей:</strong> использование глитчей, багов игры или ошибок сервера строго запрещено.">
+                        <strong>No Exploiting Vulnerabilities:</strong> Abusing glitches, game bugs, or server errors is strictly forbidden.
+                    </li>
+                    <li data-en="<strong>Report All Glitches:</strong> You are required to immediately report any bugs, exploits, or rulebreakers to the staff team." data-ru="<strong>Сообщайте обо всех багах:</strong> вы обязаны немедленно сообщать администрации о любых багах, эксплойтах или нарушителях правил.">
+                        <strong>Report All Glitches:</strong> You are required to immediately report any bugs, exploits, or rulebreakers to the staff team.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="rule-section">
+                <div class="rule-section-title" data-en="4. Community & Chat Standards" data-ru="4. Нормы Общения и Чата">4. Community & Chat Standards</div>
+                <ul class="rule-list">
+                    <li data-en="<strong>Respect Everyone:</strong> Harassment, bullying, doxxing (sharing private personal info), and wishing harm on others are banned." data-ru="<strong>Уважайте всех:</strong> травля, буллинг, доксинг (разглашение личных данных) и пожелания вреда другим запрещены.">
+                        <strong>Respect Everyone:</strong> Harassment, bullying, doxxing (sharing private personal info), and wishing harm on others are banned.
+                    </li>
+                    <li data-en="<strong>No Discrimination:</strong> Hate speech, slurs, and toxic discrimination of any kind are strictly forbidden." data-ru="<strong>Запрещена дискриминация:</strong> язык вражды, оскорбления и любая токсичная дискриминация строго запрещены.">
+                        <strong>No Discrimination:</strong> Hate speech, slurs, and toxic discrimination of any kind are strictly forbidden.
+                    </li>
+                    <li data-en="<strong>Keep Chat Clean:</strong> Spamming, flooding, encouraging spam, and abusing sound/mic-spamming in voice chat are prohibited." data-ru="<strong>Держите чат чистым:</strong> спам, флуд, поощрение спама и злоупотребление звуком/микроспамом в голосовом чате запрещены.">
+                        <strong>Keep Chat Clean:</strong> Spamming, flooding, encouraging spam, and abusing sound/mic-spamming in voice chat are prohibited.
+                    </li>
+                    <li data-en="<strong>No Unsolicited Advertising:</strong> Promotion of third-party projects or links is banned everywhere except in designated promo channels." data-ru="<strong>Запрещена несогласованная реклама:</strong> продвижение сторонних проектов или ссылок запрещено везде, кроме специально отведённых каналов.">
+                        <strong>No Unsolicited Advertising:</strong> Promotion of third-party projects or links is banned everywhere except in designated promo channels.
+                    </li>
+                    <li data-en="<strong>No Impersonation:</strong> Pretending to be a staff member or administrator is prohibited." data-ru="<strong>Запрещено выдавать себя за других:</strong> притворяться сотрудником администрации запрещено.">
+                        <strong>No Impersonation:</strong> Pretending to be a staff member or administrator is prohibited.
+                    </li>
+                    <li data-en="<strong>No Ban Evasion:</strong> Logging in on alternative accounts while banned will result in a permanent ban across all accounts." data-ru="<strong>Запрещён обход бана:</strong> вход с альтернативных аккаунтов во время бана приведёт к перманентному бану всех аккаунтов.">
+                        <strong>No Ban Evasion:</strong> Logging in on alternative accounts while banned will result in a permanent ban across all accounts.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="golden-rule" data-en="The Golden Rule: Use common sense. Just because a specific harmful action isn't explicitly listed here doesn't mean it is allowed." data-ru="Золотое правило: используйте здравый смысл. Отсутствие конкретного вредного действия в этом списке не означает, что оно разрешено.">
+                The Golden Rule: Use common sense. Just because a specific harmful action isn't explicitly listed here doesn't mean it is allowed.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'en';
+        let currentTheme = 'dark';
+        let isOnline = false;
+        let onlinePlayers = 0;
+        let maxPlayers = 0;
+
+        const SERVER_IP = "cookiekingsmp.abrdns.com:30827";
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            document.getElementById('theme-icon').innerText = currentTheme === 'dark' ? '🌙' : '☀️';
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ru' : 'en';
+            document.documentElement.lang = currentLang;
+            document.getElementById('lang-text').innerText = currentLang.toUpperCase();
+
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const val = el.dataset[currentLang];
+                if (val) {
+                    if (el.classList.contains('rule-list') || el.tagName === 'LI' || el.classList.contains('golden-rule')) {
+                        el.innerHTML = val;
+                    } else {
+                        el.innerText = val;
+                    }
+                }
+            });
+
+            updateBadgeUI();
+        }
+
+        function copyText(textToCopy, elementId) {
+            navigator.clipboard.writeText(textToCopy);
+            const el = document.getElementById(elementId);
+
+            const copiedMsg = currentLang === 'en' ? "✓ COPIED" : "✓ СКОПИРОВАНО";
+            const successMsg = currentLang === 'en' ? "Success" : "Успешно";
+
+            if (elementId === 'ip-text') {
+                el.innerText = copiedMsg;
+                setTimeout(() => { el.innerText = "cookiekingsmp.abrdns.com"; }, 1800);
+            } else {
+                const originalContent = el.innerHTML;
+                el.innerHTML = `<span style="color: var(--mint);">${copiedMsg}</span><span class="copy-hint">${successMsg}</span>`;
+                setTimeout(() => { el.innerHTML = originalContent; }, 1800);
+            }
+        }
+
+        function updateBadgeUI() {
+            const textEl = document.getElementById("online-text");
+            const badge = document.getElementById("online-badge");
+            const dot = document.getElementById("status-dot");
+
+            if (isOnline) {
+                const label = currentLang === 'en' ? 'ONLINE' : 'ИГРОКОВ';
+                textEl.innerText = `${label}: ${onlinePlayers}/${maxPlayers}`;
+                badge.style.background = "var(--mint-soft)";
+                badge.style.borderColor = "rgba(95, 224, 160, 0.35)";
+                badge.style.color = "var(--mint)";
+                if (dot) {
+                    dot.style.backgroundColor = "var(--mint)";
+                    dot.style.boxShadow = "0 0 8px var(--mint)";
+                }
+            } else {
+                textEl.innerText = currentLang === 'en' ? "OFFLINE" : "ОФФЛАЙН";
+                badge.style.background = "var(--red-soft)";
+                badge.style.borderColor = "rgba(240, 96, 95, 0.35)";
+                badge.style.color = "var(--red)";
+                if (dot) {
+                    dot.style.backgroundColor = "var(--red)";
+                    dot.style.boxShadow = "0 0 8px var(--red)";
+                }
+            }
+        }
+
+        async function updateOnline() {
+            try {
+                const response = await fetch(`https://api.mcsrvstat.us/2/${SERVER_IP}`);
+                const data = await response.json();
+
+                if (data.online) {
+                    isOnline = true;
+                    onlinePlayers = data.players ? data.players.online : 0;
+                    maxPlayers = data.players ? data.players.max : 0;
+                    updateBadgeUI();
+                    return;
+                }
+            } catch (e) {
+                console.warn("Primary API unavailable, trying backup...");
+            }
+
+            try {
+                const backupResponse = await fetch(`https://api.mcstatus.io/v2/status/java/${SERVER_IP}`);
+                const backupData = await backupResponse.json();
+
+                if (backupData.online) {
+                    isOnline = true;
+                    onlinePlayers = backupData.players ? backupData.players.online : 0;
+                    maxPlayers = backupData.players ? backupData.players.max : 0;
+                } else {
+                    isOnline = false;
+                }
+            } catch (error) {
+                isOnline = false;
+            }
+
+            updateBadgeUI();
+        }
+
+        function openRulesModal() {
+            document.getElementById('rules-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRulesModal() {
+            document.getElementById('rules-modal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeRulesModal();
+        });
+
+        updateOnline();
+        setInterval(updateOnline, 30000);
+    </script>
+</body>
+</html>

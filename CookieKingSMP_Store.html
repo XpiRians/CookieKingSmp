@@ -1,131 +1,437 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CookieKingSMP Store</title>
-<style>
-body{margin:0;background:#0b0b0d;color:white;font-family:Arial;text-align:center}
-.container{max-width:900px;margin:auto;padding:70px 20px}
-.logo{width:70px;height:70px;border-radius:50%;margin:auto;background:#ff9d42;display:flex;align-items:center;justify-content:center;font-size:35px}
-h1{font-size:42px;margin:30px}
-.subtitle{color:#999}
-.ip{color:#168cff;margin:15px}
-.cards{display:flex;gap:15px;margin-top:30px}
-.card{flex:1;background:#1b1b1e;border:1px solid #333;border-radius:16px;padding:25px;transition:.3s}
-.card:hover{transform:translateY(-8px);border-color:#168cff}
-.name{font-size:25px;font-weight:bold}.name span{color:#168cff}
-ul{text-align:left;color:#aaa;line-height:2}
-.price{border:1px solid #168cff;padding:12px;border-radius:8px;color:#168cff}
-button{margin-top:15px;width:100%;padding:12px;background:#168cff;border:0;border-radius:10px;color:white;font-weight:bold;cursor:pointer;transition:.2s}
-button:hover{background:#0e6edb}
-@media(max-width:700px){.cards{display:block}.card{margin:15px 0}}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CookieKingSMP — Магазин</title>
+  <style>
+    :root {
+      --bg-color: #0b0b0d;
+      --card-bg: #1b1b1e;
+      --text-main: #ffffff;
+      --text-sub: #999999;
+      --accent: #168cff;
+      --accent-hover: #0e6edb;
+      --border-color: #333333;
+      --modal-bg: #1b1b1e;
+      --input-bg: #0b0b0d;
+    }
 
-/* Модальное окно для ввода ника и оплаты */
-.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);justify-content:center;align-items:center;z-index:100}
-.modal{background:#1b1b1e;border:1px solid #333;border-radius:16px;padding:30px;width:90%;max-width:400px;text-align:left;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-.modal h3{margin-top:0;font-size:22px;color:#fff}
-.modal p{color:#888;font-size:14px;margin-bottom:20px}
-.modal input[type="text"]{width:100%;padding:12px;box-sizing:border-box;background:#0b0b0d;border:1px solid #444;border-radius:8px;color:white;font-size:16px;margin-bottom:15px;outline:none}
-.modal input[type="text"]:focus{border-color:#168cff}
-.modal-buttons{display:flex;gap:10px}
-.btn-close{background:#333;flex:1}
-.btn-close:hover{background:#444}
-.btn-submit{flex:2}
-</style>
+    [data-theme="light"] {
+      --bg-color: #f4f5f7;
+      --card-bg: #ffffff;
+      --text-main: #111111;
+      --text-sub: #666666;
+      --accent: #168cff;
+      --accent-hover: #0b73dc;
+      --border-color: #e0e0e0;
+      --modal-bg: #ffffff;
+      --input-bg: #f4f5f7;
+    }
+
+    * { box-sizing: border-box; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+    body { margin: 0; background: var(--bg-color); color: var(--text-main); font-family: 'Segoe UI', Arial, sans-serif; text-align: center; overflow-x: hidden; }
+
+    /* Экран загрузки (Preloader) */
+    #preloader {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-color);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s;
+    }
+    .loader-cookie {
+      font-size: 70px;
+      animation: spinCookie 1.5s infinite ease-in-out;
+    }
+    @keyframes spinCookie {
+      0% { transform: scale(0.8) rotate(0deg); }
+      50% { transform: scale(1.2) rotate(180deg); }
+      100% { transform: scale(0.8) rotate(360deg); }
+    }
+
+    /* Шапка с переключателями */
+    .header-controls { display: flex; justify-content: flex-end; gap: 10px; max-width: 900px; margin: 20px auto 0; padding: 0 20px; }
+    .control-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
+    .control-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+    .container { max-width: 900px; margin: auto; padding: 20px 20px 60px; }
+    .logo {
+      width: 80px; height: 80px; border-radius: 50%; margin: auto;
+      background: linear-gradient(135deg, #ff9d42, #ff6c00);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; box-shadow: 0 0 25px rgba(255, 157, 66, 0.5);
+      animation: floatLogo 3s infinite ease-in-out;
+    }
+    @keyframes floatLogo {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    h1 { font-size: 42px; margin: 20px 0 10px; }
+    .subtitle { color: var(--text-sub); font-size: 16px; }
+    .ip { color: var(--accent); margin: 15px 0 30px; font-weight: bold; letter-spacing: 0.5px; }
+
+    h2 { font-size: 28px; margin-top: 40px; border-bottom: 2px solid var(--border-color); display: inline-block; padding-bottom: 8px; }
+
+    /* Карточки с анимацией всплытия */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s, box-shadow 0.3s;
+      opacity: 0; transform: translateY(30px);
+      animation: fadeInUp 0.6s forwards;
+    }
+    .card:nth-child(1) { animation-delay: 0.2s; }
+    .card:nth-child(2) { animation-delay: 0.4s; }
+    .card:nth-child(3) { animation-delay: 0.6s; }
+
+    .card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--accent); box-shadow: 0 15px 30px rgba(22, 140, 255, 0.2); }
+    .name { font-size: 25px; font-weight: bold; } .name span { color: var(--accent); }
+    ul { text-align: left; color: var(--text-sub); line-height: 2; padding-left: 20px; margin: 20px 0; flex-grow: 1; }
+    .price { border: 1px solid var(--accent); padding: 12px; border-radius: 8px; color: var(--accent); font-weight: bold; font-size: 18px; }
+
+    button.buy-btn {
+      margin-top: 15px; width: 100%; padding: 12px; background: var(--accent); border: 0; border-radius: 10px;
+      color: white; font-weight: bold; font-size: 16px; cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    }
+    button.buy-btn:hover { background: var(--accent-hover); box-shadow: 0 5px 15px rgba(22, 140, 255, 0.4); }
+    button.buy-btn:active { transform: scale(0.96); }
+
+    /* Ползунки */
+    .custom-buy-box {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; margin-top: 20px; text-align: left;
+      opacity: 0; transform: translateY(30px); animation: fadeInUp 0.6s forwards 0.8s;
+    }
+    .slider-group { margin: 20px 0; }
+    .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .slider-header label { font-weight: bold; font-size: 16px; }
+    .slider-header input[type="number"] { width: 120px; padding: 8px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); font-size: 16px; font-weight: bold; text-align: right; outline: none; }
+    .slider-header input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(22, 140, 255, 0.3); }
+    input[type="range"] { width: 100%; height: 8px; border-radius: 5px; background: var(--input-bg); outline: none; accent-color: var(--accent); cursor: pointer; }
+
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Модальное окно */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 100; }
+    .modal {
+      background: var(--modal-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; width: 90%; max-width: 400px; text-align: left;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5); transform: scale(0.7); opacity: 0; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-overlay.active .modal { transform: scale(1); opacity: 1; }
+
+    .modal h3 { margin-top: 0; font-size: 22px; }
+    .modal p { color: var(--text-sub); font-size: 14px; margin-bottom: 20px; }
+    .modal input[type="text"] { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); font-size: 16px; margin-bottom: 15px; outline: none; }
+    .modal input[type="text"]:focus { border-color: var(--accent); }
+    .modal-buttons { display: flex; gap: 10px; }
+    .btn-close { background: var(--border-color); color: var(--text-main); flex: 1; border: 0; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+    .btn-submit { flex: 2; }
+
+    footer { margin-top: 60px; padding: 30px 20px; border-top: 1px solid var(--border-color); color: var(--text-sub); font-size: 13px; line-height: 1.6; }
+  </style>
 </head>
 <body>
 
-<div class="container">
-<div class="logo">🍪</div>
-<h1>Store</h1>
-<div class="subtitle">Upgrade your experience on CookieKingSMP</div>
-<div class="ip">cookiekingsmp.abrdns.com</div>
-<h2>Ranks</h2>
-<div class="cards">
-
-  <div class="card">
-    <div class="name">Cookie<span>+</span></div>
-    <ul>
-      <li>5 Homes</li>
-      <li>30 Auction Slots</li>
-      <li>Special Kit</li>
-    </ul>
-    <div class="price">500 RUB / month</div>
-    <button onclick="openPayModal('Cookie+', 500)">Buy</button>
+  <!-- Прелоадер -->
+  <div id="preloader">
+    <div class="loader-cookie">🍪</div>
+    <p style="margin-top: 15px; font-weight: bold; color: var(--accent);">Loading Store...</p>
   </div>
 
-  <div class="card">
-    <div class="name">Cookie<span>++</span></div>
-    <ul>
-      <li>15 Homes</li>
-      <li>70 Auction Slots</li>
-      <li>Premium Kit</li>
-    </ul>
-    <div class="price">1000 RUB / month</div>
-    <button onclick="openPayModal('Cookie++', 1000)">Buy</button>
+  <div class="header-controls">
+    <button class="control-btn" id="curr-btn" onclick="toggleCurrency()">USD ($)</button>
+    <button class="control-btn" id="lang-btn" onclick="toggleLang()">ENG</button>
+    <button class="control-btn" id="theme-btn" onclick="toggleTheme()">🌙 Dark</button>
   </div>
 
-  <div class="card">
-    <div class="name">Cookie<span>+++</span></div>
-    <ul>
-      <li>50 Homes</li>
-      <li>150 Auction Slots</li>
-      <li>Ultimate Kit</li>
-    </ul>
-    <div class="price">1500 RUB / month</div>
-    <button onclick="openPayModal('Cookie+++', 1500)">Buy</button>
-  </div>
+  <div class="container">
+    <div class="logo">🍪</div>
+    <h1>CookieKing<span>SMP</span></h1>
+    <div class="subtitle" id="t-subtitle">Upgrade your experience on CookieKingSMP</div>
+    <div class="ip">IP: play.cookieking.smp</div>
 
-</div>
-</div>
-
-<!-- Всплывающее окно AnyPay -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <h3 id="modal-title">Покупка привилегии</h3>
-    <p id="modal-desc">Введите ваш ник в игре для выдачи доната:</p>
-
-    <form action="https://anypay.io/merchant" method="POST" id="pay-form">
-      <!-- Настройки AnyPay -->
-      <input type="hidden" name="merchant_id" value="ТВОЙ_MERCHANT_ID">
-      <input type="hidden" name="amount" id="form-amount" value="0">
-      <input type="hidden" name="currency" value="RUB">
-      <input type="hidden" name="pay_id" id="form-pay-id" value="">
-      <input type="hidden" name="desc" id="form-desc" value="">
-
-      <!-- Ввод ника -->
-      <input type="text" name="account" placeholder="Твой ник в Minecraft" required autocomplete="off">
-
-      <div class="modal-buttons">
-        <button type="button" class="btn-close" onclick="closePayModal()">Отмена</button>
-        <button type="submit" class="btn-submit">Перейти к оплате</button>
+    <h2 id="t-ranks-title">Ranks</h2>
+    <div class="cards">
+      <div class="card">
+        <div>
+          <div class="name">COOKIE <span>VIP</span></div>
+          <ul>
+            <li id="t-c1-1">5 Homes</li>
+            <li id="t-c1-2">30 Auction Slots</li>
+            <li id="t-c1-3">Special Kit</li>
+          </ul>
+        </div>
+        <div>
+          <div class="price" id="price-rank-1">$5.00 / month</div>
+          <button class="buy-btn" id="t-buy-1" onclick="openPayModal('COOKIE VIP', 500)">Buy</button>
+        </div>
       </div>
-    </form>
+
+      <div class="card">
+        <div>
+          <div class="name">COOKIE <span>PREMIUM</span></div>
+          <ul>
+            <li id="t-c2-1">15 Homes</li>
+            <li id="t-c2-2">70 Auction Slots</li>
+            <li id="t-c2-3">Premium Kit</li>
+          </ul>
+        </div>
+        <div>
+          <div class="price" id="price-rank-2">$10.00 / month</div>
+          <button class="buy-btn" id="t-buy-2" onclick="openPayModal('COOKIE PREMIUM', 1000)">Buy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="name">COOKIE <span>KING</span></div>
+          <ul>
+            <li id="t-c3-1">50 Homes</li>
+            <li id="t-c3-2">150 Auction Slots</li>
+            <li id="t-c3-3">Ultimate Kit</li>
+          </ul>
+        </div>
+        <div>
+          <div class="price" id="price-rank-3">$15.00 / month</div>
+          <button class="buy-btn" id="t-buy-3" onclick="openPayModal('COOKIE KING', 1500)">Buy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Монеты -->
+    <h2 id="t-coins-title">In-Game Coins</h2>
+    <div class="custom-buy-box">
+      <div class="slider-group">
+        <div class="slider-header">
+          <label id="t-coins-label">CookieCoins (1 Coin = 1.2 RUB):</label>
+          <input type="number" id="coin-input" value="100" min="1" max="10000" oninput="syncCoins(this.value)">
+        </div>
+        <input type="range" id="coin-slider" value="100" min="1" max="10000" step="1" oninput="syncCoins(this.value)">
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+        <div class="price" id="price-coins">$1.20</div>
+        <button class="buy-btn" id="t-buy-coins" style="margin-top:0; width: 200px;" onclick="buyCoins()">Buy Coins</button>
+      </div>
+    </div>
+
+    <!-- Донат -->
+    <h2 id="t-donate-title">Support Server</h2>
+    <div class="custom-buy-box">
+      <div class="slider-group">
+        <div class="slider-header">
+          <label id="t-donate-label">Donation Amount:</label>
+          <input type="number" id="donate-input" value="100" min="50" max="10000" oninput="syncDonate(this.value)">
+        </div>
+        <input type="range" id="donate-slider" value="100" min="50" max="10000" step="50" oninput="syncDonate(this.value)">
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+        <div class="price" id="price-donate">$1.00</div>
+        <button class="buy-btn" id="t-buy-donate" style="margin-top:0; width: 200px;" onclick="buyDonate()">Donate</button>
+      </div>
+    </div>
+
+    <footer>
+      CookieKingSMP &copy; 2026. All rights reserved.<br>
+      Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.
+    </footer>
   </div>
-</div>
 
-<script>
-function openPayModal(rankName, price) {
-  document.getElementById('modal-title').innerText = 'Покупка ' + rankName;
-  document.getElementById('form-amount').value = price;
-  document.getElementById('form-desc').value = 'Покупка ' + rankName + ' на CookieKingSMP';
-  document.getElementById('form-pay-id').value = Date.now(); // Уникальный ID платежа
-  document.getElementById('modal').style.display = 'flex';
-}
+  <!-- Модальное окно -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3 id="modal-title">Purchase</h3>
+      <p id="modal-desc">Enter your Minecraft nickname to receive the purchase:</p>
 
-function closePayModal() {
-  document.getElementById('modal').style.display = 'none';
-}
+      <form action="https://pay.freekassa.ru/" method="GET" target="_blank">
+        <input type="hidden" name="m" value="YOUR_MERCHANT_ID">
+        <input type="hidden" name="oa" id="form-amount" value="0">
+        <input type="hidden" name="o" id="form-pay-id" value="">
+        <input type="hidden" name="currency" value="RUB">
+        <input type="hidden" name="i" value="">
+        <input type="hidden" name="desc" id="form-desc" value="">
 
-// Закрытие модалки при клике вне окна
-window.onclick = function(event) {
-  var modal = document.getElementById('modal');
-  if (event.target == modal) {
-    closePayModal();
-  }
-}
-</script>
+        <input type="text" id="input-nick" name="us_nickname" placeholder="Your Minecraft Nickname" required>
 
+        <div class="modal-buttons">
+          <button type="button" class="btn-close" id="t-modal-cancel" onclick="closePayModal()">Cancel</button>
+          <button type="submit" class="buy-btn btn-submit" id="t-modal-pay">Pay</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const RUB_PER_USD = 100;
+    let currentLang = 'ENG';
+    let currentCurr = 'USD';
+    let currentTheme = 'dark';
+
+    const rankPricesRUB = { rank1: 500, rank2: 1000, rank3: 1500 };
+
+    const i18n = {
+      ENG: {
+        subtitle: "Upgrade your experience on CookieKingSMP",
+        ranksTitle: "Ranks",
+        coinsTitle: "In-Game Coins",
+        donateTitle: "Support Server",
+        coinsLabel: "CookieCoins (1 Coin = 1.2 RUB):",
+        donateLabel: "Donation Amount:",
+        buyBtn: "Buy",
+        buyCoinsBtn: "Buy Coins",
+        donateBtn: "Donate",
+        modalDesc: "Enter your Minecraft nickname to receive the purchase:",
+        modalCancel: "Cancel",
+        modalPay: "Pay",
+        nickPlaceholder: "Your Minecraft Nickname",
+        c1: ["5 Homes", "30 Auction Slots", "Special Kit"],
+        c2: ["15 Homes", "70 Auction Slots", "Premium Kit"],
+        c3: ["50 Homes", "150 Auction Slots", "Ultimate Kit"]
+      },
+      RUS: {
+        subtitle: "Улучши свои возможности на CookieKingSMP",
+        ranksTitle: "Привилегии",
+        coinsTitle: "Игровая валюта",
+        donateTitle: "Поддержать проект",
+        coinsLabel: "CookieCoins (1 Коин = 1.2 руб):",
+        donateLabel: "Сумма поддержки:",
+        buyBtn: "Купить",
+        buyCoinsBtn: "Купить монеты",
+        donateBtn: "Поддержать",
+        modalDesc: "Введите ваш ник в игре для выдачи доната:",
+        modalCancel: "Отмена",
+        modalPay: "Оплатить",
+        nickPlaceholder: "Твой ник в Minecraft",
+        c1: ["5 Точек дома", "30 Слотов на аукционе", "Особый Кит"],
+        c2: ["15 Точек дома", "70 Слотов на аукционе", "Премиум Кит"],
+        c3: ["50 Точек дома", "150 Слотов на аукционе", "Ультимейт Кит"]
+      }
+    };
+
+    function formatPrice(amountRUB) {
+      if (currentCurr === 'USD') {
+        return '$' + (amountRUB / RUB_PER_USD).toFixed(2);
+      }
+      return amountRUB + ' RUB';
+    }
+
+    function updateUI() {
+      const t = i18n[currentLang];
+
+      document.getElementById('t-subtitle').innerText = t.subtitle;
+      document.getElementById('t-ranks-title').innerText = t.ranksTitle;
+      document.getElementById('t-coins-title').innerText = t.coinsTitle;
+      document.getElementById('t-donate-title').innerText = t.donateTitle;
+      document.getElementById('t-coins-label').innerText = t.coinsLabel;
+      document.getElementById('t-donate-label').innerText = t.donateLabel;
+
+      document.getElementById('t-buy-1').innerText = t.buyBtn;
+      document.getElementById('t-buy-2').innerText = t.buyBtn;
+      document.getElementById('t-buy-3').innerText = t.buyBtn;
+      document.getElementById('t-buy-coins').innerText = t.buyCoinsBtn;
+      document.getElementById('t-buy-donate').innerText = t.donateBtn;
+
+      document.getElementById('t-modal-cancel').innerText = t.modalCancel;
+      document.getElementById('t-modal-pay').innerText = t.modalPay;
+      document.getElementById('modal-desc').innerText = t.modalDesc;
+      document.getElementById('input-nick').placeholder = t.nickPlaceholder;
+
+      for(let i=1; i<=3; i++) {
+        document.getElementById(`t-c${i}-1`).innerText = t[`c${i}`][0];
+        document.getElementById(`t-c${i}-2`).innerText = t[`c${i}`][1];
+        document.getElementById(`t-c${i}-3`).innerText = t[`c${i}`][2];
+      }
+
+      document.getElementById('price-rank-1').innerText = formatPrice(rankPricesRUB.rank1) + ' / month';
+      document.getElementById('price-rank-2').innerText = formatPrice(rankPricesRUB.rank2) + ' / month';
+      document.getElementById('price-rank-3').innerText = formatPrice(rankPricesRUB.rank3) + ' / month';
+
+      syncCoins(document.getElementById('coin-input').value);
+      syncDonate(document.getElementById('donate-input').value);
+    }
+
+    function toggleCurrency() {
+      currentCurr = currentCurr === 'USD' ? 'RUB' : 'USD';
+      document.getElementById('curr-btn').innerText = currentCurr === 'USD' ? 'USD ($)' : 'RUB (₽)';
+      updateUI();
+    }
+
+    function toggleLang() {
+      currentLang = currentLang === 'ENG' ? 'RUS' : 'ENG';
+      document.getElementById('lang-btn').innerText = currentLang;
+      updateUI();
+    }
+
+    function toggleTheme() {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      document.getElementById('theme-btn').innerText = currentTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
+    }
+
+    function syncCoins(val) {
+      val = Math.max(1, Math.min(10000, parseInt(val) || 1));
+      document.getElementById('coin-input').value = val;
+      document.getElementById('coin-slider').value = val;
+      const priceRUB = Math.round(val * 1.2);
+      document.getElementById('price-coins').innerText = formatPrice(priceRUB);
+    }
+
+    function syncDonate(val) {
+      val = Math.max(50, Math.min(10000, parseInt(val) || 50));
+      document.getElementById('donate-input').value = val;
+      document.getElementById('donate-slider').value = val;
+      document.getElementById('price-donate').innerText = formatPrice(val);
+    }
+
+    function buyCoins() {
+      const coins = document.getElementById('coin-input').value;
+      const priceRUB = Math.round(coins * 1.2);
+      openPayModal(`${coins} CookieCoins`, priceRUB);
+    }
+
+    function buyDonate() {
+      const priceRUB = parseInt(document.getElementById('donate-input').value);
+      openPayModal(`Support Project`, priceRUB);
+    }
+
+    function openPayModal(itemName, priceRUB) {
+      document.getElementById('modal-title').innerText = itemName;
+      document.getElementById('form-amount').value = priceRUB;
+      document.getElementById('form-desc').value = itemName + ' on CookieKingSMP';
+      document.getElementById('form-pay-id').value = Date.now();
+
+      const modalOverlay = document.getElementById('modal');
+      modalOverlay.classList.add('active');
+    }
+
+    function closePayModal() {
+      const modalOverlay = document.getElementById('modal');
+      modalOverlay.classList.remove('active');
+    }
+
+    window.onclick = function(event) {
+      var modal = document.getElementById('modal');
+      if (event.target == modal) {
+        closePayModal();
+      }
+    }
+
+    window.addEventListener('load', function() {
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      setTimeout(() => {
+        preloader.style.visibility = 'hidden';
+      }, 500);
+    });
+
+    updateUI();
+  </script>
 </body>
 </html>
